@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>World Map</title><link rel="stylesheet" href="map.css">
+</head><body>
+<div id="map"></div>
+<div class="ui compass"><span class="n">N</span><span class="s">S</span><span class="e">E</span><span class="w">W</span></div>
+<div class="ui btns"><button id="zin" title="Zoom in">+</button><button id="zout" title="Zoom out">−</button><button id="reset" title="Reset view">⟲</button></div>
+<div class="ui coords" id="coords">X: --, Z: --</div>
+
+<aside class="ui" id="panel">
+  <button class="x" id="close">&times;</button>
+  <div class="badge"><i id="pdot"></i><span id="pcat"></span></div>
+  <h2 id="pname"></h2>
+  <div id="pbody"></div>
+  <img id="pimg" alt="" hidden>
+  <a class="discord" id="pdiscord" target="_blank" rel="noopener" hidden>Join Discord</a>
+</aside>
+<div id="lightbox"><img id="lbimg" alt=""></div>
+
+<script src="locations.js"></script>
+<script src="map.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const markers = [];
+let active = null;
+const isMobile = () => innerWidth <= 700;
+
+const map = createMap($('map'), {
+  onMarker: i => open(+i),
+  onClick: () => close(),
+  onMove: p => $('coords').textContent = p ? `X: ${Math.round(p.x)}, Z: ${Math.round(p.z)}` : 'X: --, Z: --'
+});
+
+LOCATIONS.forEach((l, i) => {
+  const c = CATEGORIES[l.type] || { color: '#fff', label: l.type || 'Other' };
+  markers[i] = map.addMarker(l.x, l.z, c.color, l.name, i);
+});
+
+function field(label, value) {
+  if (!value && value !== 0) return '';
+  const d = document.createElement('div'); d.className = 'f';
+  d.innerHTML = '<b></b><div></div>';
+  d.firstChild.textContent = label; d.lastChild.textContent = value;
+  return d.outerHTML;
+}
+
+function open(i) {
+  const l = LOCATIONS[i]; if (!l) return;
+  const c = CATEGORIES[l.type] || { color: '#fff', label: l.type || 'Other' };
+  if (active !== null) markers[active].classList.remove('active');
+  active = i; markers[i].classList.add('active');
+  $('pdot').style.background = c.color;
+  $('pcat').textContent = c.label;
+  $('pname').textContent = l.name;
+  $('pbody').innerHTML =
+    field('Owner / Nation', l.owner) + field('Leader', l.leader) + field('Description', l.description) +
+    field('Coordinates', `X ${l.x}${l.y !== undefined ? `, Y ${l.y}` : ''}, Z ${l.z}`) + field('Contact', l.contact);
+  $('pimg').hidden = !l.image; if (l.image) $('pimg').src = l.image;
+  $('pdiscord').hidden = !l.discord; if (l.discord) $('pdiscord').href = l.discord;
+  $('panel').classList.add('open');
+  map.flyTo(l.x, l.z, Math.max(map.scale, 1.6), isMobile() ? { y: -innerHeight * 0.2 } : { x: -170 });
+}
+function close() {
+  $('panel').classList.remove('open');
+  if (active !== null) markers[active].classList.remove('active');
+  active = null;
+}
+$('close').onclick = close;
+$('zin').onclick = () => map.zoomBy(1.5);
+$('zout').onclick = () => map.zoomBy(1 / 1.5);
+$('reset').onclick = () => { close(); map.fit(true); };
+$('pimg').onclick = () => { $('lbimg').src = $('pimg').src; $('lightbox').classList.add('open'); };
+$('lightbox').onclick = () => $('lightbox').classList.remove('open');
+addEventListener('keydown', e => { if (e.key === 'Escape') { $('lightbox').classList.remove('open'); close(); } });
+</script>
+</body></html>

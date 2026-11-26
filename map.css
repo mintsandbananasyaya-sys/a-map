@@ -1,0 +1,44 @@
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;color:#e8edf3;font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;overflow:hidden}
+#map{position:fixed;inset:0;overflow:hidden;touch-action:none;cursor:grab;background:#000;user-select:none}
+#map.grabbing{cursor:grabbing}
+.world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
+.world.anim{transition:transform .5s cubic-bezier(.3,.7,.2,1)}
+.world img{display:block;width:100%;height:100%;image-rendering:pixelated;-webkit-user-drag:none;pointer-events:none}
+.marker{position:absolute;width:0;height:0;z-index:2}
+.marker .dot{position:absolute;left:0;top:0;width:16px;height:16px;border-radius:50%;background:var(--c);border:2px solid #fff;box-shadow:0 1px 6px rgba(0,0,0,.7);transform:translate(-50%,-50%) scale(var(--inv,1));cursor:pointer;transition:filter .15s}
+.marker:hover{z-index:5}
+.marker:hover .dot{filter:brightness(1.25);box-shadow:0 0 0 4px rgba(255,255,255,.25),0 1px 6px rgba(0,0,0,.7)}
+.marker .tip{position:absolute;bottom:150%;left:50%;transform:translateX(-50%);background:rgba(10,18,30,.92);border:1px solid #2e4259;padding:3px 8px;border-radius:4px;white-space:nowrap;font-size:12px;opacity:0;pointer-events:none;transition:opacity .12s}
+.marker:hover .tip{opacity:1}
+.marker.active .dot{box-shadow:0 0 0 5px rgba(255,255,255,.35)}
+.ui{position:fixed;z-index:10}
+.btns{right:14px;top:14px;display:flex;flex-direction:column;gap:6px}
+.btns button{width:36px;height:36px;background:rgba(14,24,38,.92);color:#fff;border:1px solid #2e4259;border-radius:8px;font-size:18px;cursor:pointer}
+.btns button:hover{background:#1c3047}
+.coords{left:14px;bottom:14px;background:rgba(14,24,38,.92);border:1px solid #2e4259;border-radius:8px;padding:6px 10px;font:13px ui-monospace,Consolas,monospace;pointer-events:none}
+.compass{left:14px;top:14px;width:54px;height:54px;border-radius:50%;background:rgba(14,24,38,.92);border:1px solid #2e4259;font-weight:700;font-size:11px;pointer-events:none}
+.compass span{position:absolute}
+.compass .n{top:3px;left:50%;transform:translateX(-50%);color:#ff6b6b}
+.compass .s{bottom:3px;left:50%;transform:translateX(-50%)}
+.compass .e{right:5px;top:50%;transform:translateY(-50%)}
+.compass .w{left:5px;top:50%;transform:translateY(-50%)}
+#panel{top:0;right:0;width:340px;height:100%;background:#101c2d;border-left:1px solid #2e4259;padding:22px;overflow-y:auto;transform:translateX(105%);transition:transform .35s ease;z-index:20}
+#panel.open{transform:none}
+#panel .x{position:absolute;top:10px;right:12px;background:none;border:0;color:#fff;font-size:26px;cursor:pointer}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#9fb0c4}
+.badge i{width:10px;height:10px;border-radius:50%;border:2px solid #fff}
+#panel h2{margin:4px 30px 6px 0;font-size:22px}
+.f{margin-top:14px}.f b{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8da0b6;margin-bottom:2px}
+.f div{white-space:pre-wrap}
+#pimg{width:100%;border-radius:8px;border:1px solid #2e4259;margin-top:14px;cursor:zoom-in}
+.discord{display:block;margin-top:16px;background:#5865f2;color:#fff;text-align:center;text-decoration:none;font-weight:700;padding:10px;border-radius:8px}
+.discord:hover{background:#4752c4}
+#lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:50;padding:30px}
+#lightbox.open{display:flex}
+#lightbox img{max-width:100%;max-height:100%;border-radius:8px}
+@media(max-width:700px){
+ #panel{top:auto;bottom:0;width:100%;height:auto;max-height:46vh;border-left:0;border-top:1px solid #2e4259;border-radius:14px 14px 0 0;transform:translateY(105%)}
+ #panel.open{transform:none}
+ .coords{bottom:auto;top:76px}
+}
